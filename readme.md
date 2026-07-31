@@ -8,3 +8,5 @@
 
 This serves as the overall documentation of Panzian's Inventory Management System. 
 
+The Panzian Inventory Management System is an powered by a Raspberry Pi 5, which stores the database via an SQLite3, and 3 routers that span throughout the entirety of the resort. The routers does not pass any kind of internet so the uploading of data will 
+
