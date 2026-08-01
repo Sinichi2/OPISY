@@ -15,7 +15,7 @@ def import_excel(path, conn=None):
     """
     products, skipped = transform(read_rows(path))
     if not products:
-        raise ValueError("No products found. The sheet needs a column named Product or Item.")
+        raise ValueError("no_products")  # key into backend.i18n.STRINGS, translated by the caller
 
     own_connection = conn is None
     conn = conn or get_db_connection()
