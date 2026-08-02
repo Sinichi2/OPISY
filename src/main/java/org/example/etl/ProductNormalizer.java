@@ -31,6 +31,7 @@ public final class ProductNormalizer {
                 "dami", "bilang", "stock on hand"));
         ALIASES.put("unit_price", List.of("unit price", "price", "cost", "unit cost", "srp", "amount",
                 "presyo", "halaga"));
+        // ALIASES.put("")
     }
 
     private static final Map<String, String> LOOKUP = new LinkedHashMap<>();
