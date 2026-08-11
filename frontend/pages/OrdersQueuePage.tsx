@@ -9,6 +9,7 @@ interface Order {
   id: number;
   customer_name: string;
   table_number: string | null;
+  location_name: string | null;
   notes: string | null;
   status: "pending" | "preparing" | "ready";
   assigned_to: number | null;
@@ -190,6 +191,12 @@ function Card({
           <>
             <span className="mx-2 text-hair-strong">·</span>
             <span className="text-mid">Table {order.table_number}</span>
+          </>
+        )}
+        {order.location_name && (
+          <>
+            <span className="mx-2 text-hair-strong">·</span>
+            <span className="text-muted">{order.location_name}</span>
           </>
         )}
       </p>

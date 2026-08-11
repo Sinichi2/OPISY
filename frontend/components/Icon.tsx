@@ -33,3 +33,4 @@ export function IconUpload(p: Props) { return <svg {...base(p)}><path d="M12 16V
 export function IconCopy(p: Props)   { return <svg {...base(p)}><rect x="8" y="8" width="12" height="12" rx="1"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg>; }
 export function IconGlobe(p: Props)  { return <svg {...base(p)}><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a13 13 0 0 1 0 18"/><path d="M12 3a13 13 0 0 0 0 18"/></svg>; }
 export function IconChevron(p: Props){ return <svg {...base(p)}><path d="M6 9l6 6 6-6"/></svg>; }
+export function IconPrinter(p: Props){ return <svg {...base(p)}><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1"/><path d="M6 17v4h12v-4"/></svg>; }

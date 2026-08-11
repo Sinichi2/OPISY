@@ -6,6 +6,7 @@ interface OrderLineIn { menu_item_id: number; quantity: number }
 interface OrderIn {
   customer_name?: string;
   table_number?: string | null;
+  table_id?: number | null;
   notes?: string | null;
   lines?: OrderLineIn[];
 }
@@ -52,6 +53,12 @@ export async function placeOrder(req: Request): Promise<Response> {
   let orderId!: number;
   try {
     db.transaction(() => {
+      // A QR scan sends table_id; reject it early rather than silently
+      // dropping the link if the table was deleted between scan and order.
+      if (body.table_id != null && !db.query("SELECT 1 FROM tables WHERE id = ?").get(body.table_id)) {
+        throw new Error("table_not_found");
+      }
+
       // Snapshot prices, ensure every line is currently available.
       const menuStmt = db.query("SELECT id, price, available FROM menu_items WHERE id = ?");
       const priced = body.lines!.map((l) => {
@@ -62,10 +69,10 @@ export async function placeOrder(req: Request): Promise<Response> {
       });
 
       const order = db.query(`
-        INSERT INTO orders (customer_name, table_number, notes, order_token)
-        VALUES (?, ?, ?, ?) RETURNING id
+        INSERT INTO orders (customer_name, table_number, table_id, notes, order_token)
+        VALUES (?, ?, ?, ?, ?) RETURNING id
       `).get(
-        name, body.table_number ?? null, body.notes ?? null, token,
+        name, body.table_number ?? null, body.table_id ?? null, body.notes ?? null, token,
       ) as { id: number };
       orderId = order.id;
 
@@ -111,11 +118,15 @@ export const listOrders = guard("staff", async () => {
     SELECT o.id, o.customer_name, o.table_number, o.notes, o.status,
            o.assigned_to, u.username AS assigned_to_name,
            o.claimed_at, o.ready_at, o.priority, o.placed_at,
+           l.name AS location_name,
            ROW_NUMBER() OVER (
              PARTITION BY o.status
              ORDER BY o.priority DESC, o.placed_at ASC
            ) AS queue_position
-    FROM orders o LEFT JOIN users u ON u.id = o.assigned_to
+    FROM orders o
+    LEFT JOIN users u ON u.id = o.assigned_to
+    LEFT JOIN tables t ON t.id = o.table_id
+    LEFT JOIN locations l ON l.id = t.location_id
     WHERE o.status IN ('pending','preparing','ready')
     ORDER BY o.status, o.priority DESC, o.placed_at ASC
   `).all() as any[];

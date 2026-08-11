@@ -114,6 +114,18 @@ export const STRINGS: Record<string, Entry> = {
   menu_empty:        { en: "No dishes yet.",   ilo: "Awan pay ti putahe.",    tl: "Wala pang ulam." },
   add_to_cart:       { en: "Add to cart",      ilo: "Inayon iti kariton",     tl: "Idagdag sa cart" },
   menu_item_not_found: { en: "Dish not found.", ilo: "Awan a nabirukan a putahe.", tl: "Hindi mahanap ang ulam." },
+
+  // -- tables / QR ordering -----------------------------------------
+  nav_tables:        { en: "Tables",           ilo: "Dagiti lamisaan",        tl: "Mga mesa" },
+  locations:         { en: "Locations",        ilo: "Dagiti lugar",           tl: "Mga lokasyon" },
+  add_location:      { en: "Add location",     ilo: "Mangnayon a lugar",      tl: "Magdagdag ng lokasyon" },
+  add_table:         { en: "Add table",        ilo: "Mangnayon a lamisaan",   tl: "Magdagdag ng mesa" },
+  table_label:       { en: "Table label",      ilo: "Etiketa ti lamisaan",    tl: "Label ng mesa" },
+  print_qr:          { en: "Print QR",         ilo: "I-print ti QR",          tl: "I-print ang QR" },
+  no_location:       { en: "No location",      ilo: "Awan lugar",             tl: "Walang lokasyon" },
+  tables_empty:      { en: "No tables yet.",   ilo: "Awan pay ti lamisaan.",  tl: "Wala pang mesa." },
+  table_not_found:   { en: "Table not found.", ilo: "Awan a nabirukan a lamisaan.", tl: "Hindi mahanap ang mesa." },
+  location_not_found:{ en: "Location not found.", ilo: "Awan a nabirukan a lugar.", tl: "Hindi mahanap ang lokasyon." },
 };
 
 export function t(key: string, lang: string): string {

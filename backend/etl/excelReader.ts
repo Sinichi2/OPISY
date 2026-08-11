@@ -19,7 +19,7 @@ export function readRows(fileBytes: ArrayBuffer): Record<string, string>[] {
       const cells = rawCells.map((c) => String(c ?? "").trim());
 
       if (header === null) {
-        // ponytail: header = first row with 2+ filled cells. Covers the
+        // header = first row with 2+ filled cells. Covers the
         // title/logo rows real sheets have on top. If a sheet ever needs
         // an explicit header row number, pass it in per sheet.
         if (cells.filter(Boolean).length >= 2) {

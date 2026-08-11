@@ -5,14 +5,18 @@ import { useLang } from "../lang";
 import { LangPicker } from "./LangPicker";
 import { IconMenu, IconClose } from "./Icon";
 
-interface Item { to: string; key: string; min: Role }
+interface Item { to: string; key: string; min: Role; not?: Role }
 const ITEMS: Item[] = [
-  { to: "/",            key: "nav_menu",      min: "visitor" },
-  { to: "/orders/mine", key: "nav_my_orders", min: "visitor" },
+  // Owner runs the place, not the counter — menu browsing and order
+  // tracking are for visitors/staff, so owner is excluded even though
+  // "visitor" would otherwise let every role through.
+  { to: "/",            key: "nav_menu",      min: "visitor", not: "owner" },
+  { to: "/orders/mine", key: "nav_my_orders", min: "visitor", not: "owner" },
   { to: "/inventory",   key: "nav_inventory", min: "staff" },
   { to: "/orders",      key: "nav_orders",    min: "staff" },
   { to: "/upload",      key: "nav_upload",    min: "staff" },
   { to: "/menu/edit",   key: "nav_menu_edit", min: "owner" },
+  { to: "/tables",      key: "nav_tables",    min: "owner" },
   { to: "/users",       key: "nav_users",     min: "owner" },
   { to: "/analytics",   key: "nav_analytics", min: "owner" },
 ];
@@ -26,7 +30,7 @@ export function Nav() {
   // Staff+ see the tab strip. Visitors and unauthenticated users only see
   // the logo, lang picker, and login button — no navigation tabs.
   const showTabs = hasRole(user, "staff");
-  const visible = showTabs ? ITEMS.filter((i) => hasRole(user, i.min)) : [];
+  const visible = showTabs ? ITEMS.filter((i) => hasRole(user, i.min) && i.not !== user?.role) : [];
 
   return (
     <header className="sticky top-0 z-20 border-b border-hair bg-peach/85 backdrop-blur">

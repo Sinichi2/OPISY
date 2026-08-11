@@ -17,6 +17,10 @@ import {
   updateStatus, setPriority, queuePositionByToken, myOrder,
 } from "./handlers/orders";
 import { wasteAnalytics, salesAnalytics, lowStockAnalytics } from "./handlers/analytics";
+import {
+  listLocations, createLocation, deleteLocation,
+  listTables, createTable, deleteTable, getTable,
+} from "./handlers/tables";
 
 const PORT = Number(process.env.PORT ?? 3001);
 
@@ -62,6 +66,11 @@ Bun.serve({
     "/api/analytics/waste":             { GET: wasteAnalytics },
     "/api/analytics/sales":             { GET: salesAnalytics },
     "/api/analytics/low-stock":         { GET: lowStockAnalytics },
+
+    "/api/locations":                    { GET: listLocations, POST: createLocation },
+    "/api/locations/:id":                { DELETE: deleteLocation },
+    "/api/tables":                       { GET: listTables, POST: createTable },
+    "/api/tables/:id":                   { GET: getTable, DELETE: deleteTable },
 
     "/api/upload": {
       POST: guard("staff", async (req) => {

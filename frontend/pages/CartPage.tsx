@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiJson, ApiError } from "../api";
 import { useCart } from "../cart";
@@ -6,6 +6,7 @@ import { useLang } from "../lang";
 import { IconPlus, IconMinus, IconClose, IconArrow } from "../components/Icon";
 
 const MY_ORDER_TOKEN = "opisy_my_order_token";
+const SCANNED_TABLE = "opisy_table";
 
 export function CartPage() {
   const { t } = useLang();
@@ -13,9 +14,28 @@ export function CartPage() {
   const nav = useNavigate();
   const [name, setName] = useState("");
   const [table, setTable] = useState("");
+  const [tableId, setTableId] = useState<number | null>(null);
+  const [tableLoc, setTableLoc] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Table QR scan (App.tsx's TableCapture) drops its resolved table here;
+  // pre-fill from it once, on mount.
+  useEffect(() => {
+    const raw = localStorage.getItem(SCANNED_TABLE);
+    if (!raw) return;
+    try {
+      const scanned = JSON.parse(raw) as { id: number; label: string; location_name: string | null };
+      setTable(scanned.label); setTableId(scanned.id); setTableLoc(scanned.location_name);
+    } catch { /* ignore corrupt value */ }
+  }, []);
+
+  // Editing the scanned label by hand means it may no longer match that
+  // table, so drop the link rather than send a mismatched id.
+  function editTable(value: string) {
+    setTable(value); setTableId(null); setTableLoc(null);
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -24,7 +44,7 @@ export function CartPage() {
       const res = await apiJson<{ id: number; order_token: string; queue_position: number }>(
         "/api/orders",
         {
-          customer_name: name, table_number: table || null, notes: notes || null,
+          customer_name: name, table_number: table || null, table_id: tableId, notes: notes || null,
           lines: lines.map((l) => ({ menu_item_id: l.menu_item_id, quantity: l.quantity })),
         },
       );
@@ -104,8 +124,11 @@ export function CartPage() {
               <input required value={name} onChange={(e) => setName(e.target.value)} className="field" />
             </label>
             <label className="flex flex-col gap-2">
-              <span className="text-xs uppercase tracking-[0.14em] text-muted">Table number (optional)</span>
-              <input value={table} onChange={(e) => setTable(e.target.value)} className="field" />
+              <span className="text-xs uppercase tracking-[0.14em] text-muted">
+                Table number (optional)
+                {tableId != null && <span className="normal-case text-muted"> · scanned{tableLoc ? ` · ${tableLoc}` : ""}</span>}
+              </span>
+              <input value={table} onChange={(e) => editTable(e.target.value)} className="field" />
             </label>
             <label className="flex flex-col gap-2 sm:col-span-2">
               <span className="text-xs uppercase tracking-[0.14em] text-muted">Notes (optional)</span>
