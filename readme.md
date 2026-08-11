@@ -30,3 +30,7 @@ If any detail is missing, please contact **Shiva Matthew Cruz** immediately. You
 #### **Owner** 
 
 The Owner role is primarily with the 
+
+#### Starting the project
+
+Initialize the project 
