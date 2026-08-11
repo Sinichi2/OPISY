@@ -29,7 +29,11 @@ export async function api<T = unknown>(
   const body = isJson ? await res.json() : await res.text();
 
   if (!res.ok) {
-    if (res.status === 401 && onUnauthorized) onUnauthorized();
+    // /api/auth/me is a status probe — a 401 there means "not logged in",
+    // not "session expired mid-flow". Don't bounce the user to /login.
+    if (res.status === 401 && onUnauthorized && !path.startsWith("/api/auth/me")) {
+      onUnauthorized();
+    }
     const err = typeof body === "object" && body ? body : { error: String(body) };
     throw new ApiError(res.status, err.error ?? "unknown_error", err);
   }

@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./auth";
+import { AuthProvider, hasRole, useAuth } from "./auth";
 import { LangProvider, useLang } from "./lang";
 import { CartProvider } from "./cart";
 import { setUnauthorizedHandler } from "./api";
 import { Nav } from "./components/Nav";
+import { LangPicker } from "./components/LangPicker";
 import { RoleGate } from "./components/RoleGate";
 import { LoginPage } from "./pages/LoginPage";
 import { ForbiddenPage } from "./pages/ForbiddenPage";
@@ -46,6 +47,22 @@ function TitleSync() {
   return null;
 }
 
+function StaffNav() {
+  const { user } = useAuth();
+  if (!hasRole(user, "staff")) return null;
+  return <Nav />;
+}
+
+function VisitorLang() {
+  const { user } = useAuth();
+  if (hasRole(user, "staff")) return null;
+  return (
+    <div className="fixed right-6 top-6 z-20">
+      <LangPicker />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <LangProvider>
@@ -55,7 +72,8 @@ export default function App() {
         <BrowserRouter>
           <Redirector />
           <ForceReset />
-          <Nav />
+          <StaffNav />
+          <VisitorLang />
           <Routes>
             <Route path="/"          element={<MenuPage />} />
             <Route path="/login"     element={<LoginPage />} />

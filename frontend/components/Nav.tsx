@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { hasRole, useAuth, type Role } from "../auth";
 import { useLang } from "../lang";
 import { LangPicker } from "./LangPicker";
@@ -21,11 +21,12 @@ export function Nav() {
   const { user, logout } = useAuth();
   const { t } = useLang();
   const [open, setOpen] = useState(false);
-  const loc = useLocation();
+  const close = () => setOpen(false);
 
-  useEffect(() => { setOpen(false); }, [loc.pathname]);
-
-  const visible = ITEMS.filter((i) => hasRole(user, i.min));
+  // Staff+ see the tab strip. Visitors and unauthenticated users only see
+  // the logo, lang picker, and login button — no navigation tabs.
+  const showTabs = hasRole(user, "staff");
+  const visible = showTabs ? ITEMS.filter((i) => hasRole(user, i.min)) : [];
 
   return (
     <header className="sticky top-0 z-20 border-b border-hair bg-peach/85 backdrop-blur">
@@ -40,6 +41,7 @@ export function Nav() {
               <NavLink
                 to={i.to}
                 end={i.to === "/"}
+                onClick={close}
                 className={({ isActive }) =>
                   `relative py-1 text-sm transition-colors ${
                     isActive
@@ -57,9 +59,9 @@ export function Nav() {
         <div className="ml-auto flex items-center gap-4">
           <div className="hidden md:block"><LangPicker /></div>
           {user ? (
-            <Link to="/login" className="btn-primary">{t("login")}</Link>
-          ) : (
             <button onClick={logout} className="btn-ghost">{t("logout")}</button>
+          ) : (
+            <Link to="/login" className="btn-primary">{t("login")}</Link>
           )}
           <button
             className="md:hidden"
@@ -79,6 +81,7 @@ export function Nav() {
                 <NavLink
                   to={i.to}
                   end={i.to === "/"}
+                  onClick={close}
                   className={({ isActive }) =>
                     `block text-base ${isActive ? "text-brown-deep" : "text-mid"}`
                   }

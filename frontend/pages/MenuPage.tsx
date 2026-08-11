@@ -121,8 +121,7 @@ export function MenuPage() {
       {cartCount > 0 && (
         <Link
           to="/cart"
-          className="fixed bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4 border border-brown-deep bg-brown-deep px-5 py-3 text-paper transition-transform hover:-translate-y-px active:scale-[0.99]"
-          style={{ transform: "translateX(-50%)" }}
+          className="fixed bottom-6 right-6 z-10 flex items-center gap-4 border border-brown-deep bg-brown-deep px-5 py-3 text-paper transition-transform hover:-translate-y-px active:scale-[0.99]"
         >
           <span className="text-sm">
             <span className="font-mono">{cartCount}</span> in cart
