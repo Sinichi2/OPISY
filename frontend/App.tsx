@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { t, type Lang } from './i18n'
 
 type Result =
@@ -10,10 +10,6 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<Result | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    document.title = t('window_title', lang)
-  }, [lang])
 
   async function upload(file: File) {
     setLoading(true)
