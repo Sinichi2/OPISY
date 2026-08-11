@@ -1,5 +1,5 @@
 import type { Database } from "bun:sqlite";
-import { applySchema, connect } from "../db";
+import { connect, runMigrations } from "../db";
 import { readRows } from "./excelReader";
 import { transform } from "./productNormalizer";
 import { load } from "./productLoader";
@@ -23,7 +23,7 @@ export function importExcel(fileBytes: ArrayBuffer, db?: Database): ImportResult
   const ownConnection = db === undefined;
   const conn = db ?? connect();
   try {
-    applySchema(conn);
+    runMigrations(conn);
     const { products, skipped } = transform(readRows(fileBytes));
     if (products.length === 0) {
       throw new Error("no_products");

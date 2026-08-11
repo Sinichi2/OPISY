@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-Light.ttf") format("truetype");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-LightItalic.ttf") format("truetype");
+  font-weight: 300; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-Regular.ttf") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-RegularItalic.ttf") format("truetype");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-Medium.ttf") format("truetype");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-MediumItalic.ttf") format("truetype");
+  font-weight: 500; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-Bold.ttf") format("truetype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "ElliotSans";
+  src: url("./assets/fonts/elliot-sans/ElliotSans-BoldItalic.ttf") format("truetype");
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+@theme {
+  --color-peach:    #ffeace;
+  --color-ivory:    #fbf4e2;
+  --color-paper:    #fffcf5;
+  --color-white:    #ffffff;
+  --color-brown:    #8f7158;
+  --color-brown-deep: #5a4633;
+  --color-brown-darkest: #3f3223;
+  --color-charcoal: #1f1a15;
+  --color-ink:      #3b332b;
+  --color-mid:      #6c635a;
+  --color-muted:    #9a9088;
+  --color-hair:     rgba(90, 70, 51, 0.16);
+  --color-hair-strong: rgba(90, 70, 51, 0.28);
+  --color-link:     #6b5033;
+
+  --color-warn-bg:   #f6e2ba;
+  --color-warn-fg:   #7a4f16;
+  --color-info-bg:   #e4dceb;
+  --color-info-fg:   #4a3f6b;
+  --color-ok-bg:     #dde6d5;
+  --color-ok-fg:     #3d5a34;
+  --color-done-bg:   #ece6dd;
+  --color-done-fg:   #5c554e;
+  --color-danger-bg: #f4d3d0;
+  --color-danger:    #8a2b26;
+
+  --font-body:    "ElliotSans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Newsreader", "Arbutus Slab", ui-serif, Georgia, serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-badge:  2px;
+  --radius-button: 4px;
+  --radius-card:   4px;
+
+  --spacing-xs:  4px;
+  --spacing-sm:  8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+  --spacing-2xl: 64px;
+  --spacing-3xl: 96px;
+}
+
+* { -webkit-font-smoothing: antialiased; }
+
+html { color-scheme: light; }
+
+body {
+  background: var(--color-peach);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  color: var(--color-brown-deep);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Editorial input reset used across the app */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--color-hair-strong);
+  padding: 8px 0;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 160ms ease;
+}
+.field:focus { border-bottom-color: var(--color-brown-deep); }
+.field::placeholder { color: var(--color-muted); }
+
+textarea.field { resize: vertical; min-height: 60px; }
+select.field { appearance: none; padding-right: 20px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1L6 6L11 1' stroke='%235a4633' stroke-width='1.5'/></svg>");
+  background-repeat: no-repeat; background-position: right 2px center; }
+
+/* Solid primary CTA (used for all "commit" actions) */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px;
+  background: var(--color-brown-deep);
+  color: var(--color-paper);
+  border: 1px solid var(--color-brown-deep);
+  border-radius: var(--radius-button);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  transition: transform 120ms ease, background 160ms ease;
+  cursor: pointer;
+}
+.btn-primary:hover  { background: var(--color-brown-darkest); }
+.btn-primary:active { transform: scale(0.985); }
+.btn-primary:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-hair-strong);
+  border-radius: var(--radius-button);
+  font-weight: 500;
+  font-size: 12.8px;
+  transition: border-color 160ms ease, color 160ms ease;
+  cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(--color-brown-deep); color: var(--color-brown-deep); }
+.btn-ghost:disabled { opacity: 0.45; cursor: default; }
+
+.btn-quiet {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  color: var(--color-mid);
+  border: 0;
+  font-size: 12.8px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+.btn-quiet:hover { color: var(--color-brown-deep); }
+.btn-quiet:disabled { opacity: 0.45; cursor: default; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  font-size: 12.8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-radius: var(--radius-button);
+  border: 1px solid transparent;
+  line-height: 1.5;
+}
+
+.rule { border-top: 1px solid var(--color-hair); }
+
+/* Softer scroll-in for the primary panel of a page */
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 520ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise { animation: none; }
+}

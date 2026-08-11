@@ -2,7 +2,7 @@
 import { expect, test } from "bun:test";
 import { Database } from "bun:sqlite";
 import * as XLSX from "xlsx";
-import { applySchema } from "../db";
+import { runMigrations } from "../db";
 import { importExcel } from "./pipeline";
 
 const MESSY_SHEET = [
@@ -31,7 +31,7 @@ function stock(db: Database, name: string) {
 test("messy workbook end to end", () => {
   const bytes = buildWorkbookBytes();
   const db = new Database(":memory:");
-  applySchema(db);
+  runMigrations(db);
 
   const first = importExcel(bytes, db);
   expect(first).toEqual({ inserted: 2, updated: 1, skipped: 1 });

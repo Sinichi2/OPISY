@@ -1,4 +1,4 @@
-## Panziann Inventory System 
+## Pan - Panziann Inventory System 
 ### *Created by Shiva Matthew Cruz on July 31, 2026* 
 ### *Updated by: Shiva Matthew Cruz*
 ### *Date: July 31st, 2026*
@@ -29,9 +29,20 @@ If any detail is missing, please contact **Shiva Matthew Cruz** immediately. You
 
 #### **Owner** 
 
-The Owner role has access to all of the pages and has the same level of visibility as the  
+The Owner role has access to all of the pages (aside from technical pages) and has the same level of visibility as the Super admin. Owner will have access to aspects such as analytics page, customizing menus, etc. The owner role is also a super admin per se, but with less technicality. 
+
+The owner (& Staff) will be alerted to low stocks, can check stock count and waste tracking (with reason codes: Dropped, Expired, over-prepped) and different kinds of recipe integration to the menu that the staff can also see (especially, when they are the chef)
+
+The owner can also classify what kind of staff there is, so RBAC is integrated to the add staff button, the add staff can create accounts with usernames and passwords. 
 
 #### Staff
+
+The staff role has 
+
+
+#### Visitor 
+
+Visitor role **only** has access to the restaurant menu and they can order meals of their choice based on what is available within the menu. 
 
 
 #### Starting the project

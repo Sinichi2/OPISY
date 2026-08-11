@@ -1,7 +1,7 @@
 ---
-version: alpha
-name: "Pannzian Tropical Resort"
-description: "Pannzian is a tropical resort website built on WordPress with a warm, nature-inspired aesthetic. The design uses a soft peach (#ffeace) background, earthy brown heading color (#8f7158), and a clean sans-serif body font (ElliotSans) paired with a decorative serif (Arbutus Slab) for headings. Navigation is minimal and flat with a bottom-border active indicator. Full-bleed photography dominates above-the-fold sections, and content sections use generous whitespace with centered editorial text layouts."
+version: beta
+name: "Pan"
+description: "Pan is the inventory and orders workspace for Pannzian, a tropical resort. The interface keeps the warm peach canvas of the resort brand but reads as an editorial document: hairline dividers, generous whitespace, no heavy shadows, no pill product-badges. Body text is ElliotSans on the peach ground; headings use Newsreader (with Arbutus Slab as the print-face fallback) in a deeper roasted brown. Numbers, keystrokes, and monetary values are set in JetBrains Mono. Color enters only through low-chroma status washes."
 colors:
   peach-surface: "#ffeace"
   white-surface: "#ffffff"
@@ -38,15 +38,20 @@ typography:
     fontWeight: "700"
     lineHeight: "28.8px"
   page-heading-h1:
-    fontFamily: "Arbutus Slab"
+    fontFamily: "Newsreader"
     fontSize: "35px"
     fontWeight: "400"
     lineHeight: "42px"
   section-heading-h2:
-    fontFamily: "Arbutus Slab"
+    fontFamily: "Newsreader"
     fontSize: "30px"
     fontWeight: "400"
     lineHeight: "36px"
+  mono-numeric:
+    fontFamily: "JetBrains Mono"
+    fontSize: "14px"
+    fontWeight: "400"
+    lineHeight: "20px"
 rounded:
   badge: "2px"
   button: "4px"
@@ -150,11 +155,12 @@ The palette uses 8 validated color tokens across 1 theme profile. Semantic roles
 
 Typography uses ElliotSans, Arbutus Slab across extracted hierarchy roles. Keep hierarchy mapped to these token rows before adding decorative type styles.
 
-Mixes ElliotSans and Arbutus Slab for visual contrast. Weight range spans regular, bold. Sizes range from 12.8px to 35px.
+Editorial serif Newsreader carries headings (Arbutus Slab kept as historical fallback). ElliotSans carries body and UI. JetBrains Mono carries any numeric, monetary, or code value where alignment matters. Weight range 400–700. Sizes 12.8px to 35px.
 
 ### Font Roles
-- **Headline Font**: ElliotSans
+- **Headline Font**: Newsreader
 - **Body Font**: ElliotSans
+- **Mono Font**: JetBrains Mono
 
 ### Type Scale Evidence
 | Role | Font | Size | Weight | Line Height | Letter Spacing | Stack / Features | Notes |
