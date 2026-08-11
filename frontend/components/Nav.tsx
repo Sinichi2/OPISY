@@ -57,16 +57,9 @@ export function Nav() {
         <div className="ml-auto flex items-center gap-4">
           <div className="hidden md:block"><LangPicker /></div>
           {user ? (
-            <>
-              <span className="hidden text-xs text-mid sm:inline">
-                {user.username}
-                <span className="mx-1 text-hair-strong">/</span>
-                <span className="uppercase tracking-[0.14em]">{user.role}</span>
-              </span>
-              <button onClick={logout} className="btn-ghost">{t("logout")}</button>
-            </>
-          ) : (
             <Link to="/login" className="btn-primary">{t("login")}</Link>
+          ) : (
+            <button onClick={logout} className="btn-ghost">{t("logout")}</button>
           )}
           <button
             className="md:hidden"
