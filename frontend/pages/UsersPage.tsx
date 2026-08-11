@@ -3,6 +3,7 @@ import { api, apiJson, ApiError } from "../api";
 import { hasRole, useAuth, type Role } from "../auth";
 import { useLang } from "../lang";
 import { Modal } from "../components/Modal";
+import { IconCheck, IconCopy, IconPlus } from "../components/Icon";
 
 interface Row {
   id: number;
@@ -46,47 +47,62 @@ export function UsersPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-heading text-3xl text-brown">{t("nav_users")}</h1>
-        <button onClick={() => setAdding(true)}
-          className="rounded-button bg-brown px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-90">
-          + Add user
+    <main className="mx-auto max-w-5xl px-6 py-12">
+      <header className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-hair pb-6">
+        <div>
+          <h1 className="font-heading text-4xl text-brown-deep">{t("nav_users")}</h1>
+          <p className="mt-3 text-sm text-mid">
+            <span className="font-mono text-ink">{rows.length}</span> accounts with access
+          </p>
+        </div>
+        <button onClick={() => setAdding(true)} className="btn-primary">
+          <IconPlus size={14} />
+          Add user
         </button>
-      </div>
-      {error && <p className="mb-4 text-danger">{t(error)}</p>}
-      {loading ? <p>{t("loading")}</p> : (
-        <div className="overflow-hidden rounded-card bg-white shadow">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-peach">
-              <tr>
-                <th className="p-2">{t("username")}</th>
-                <th className="p-2">Role</th>
-                <th className="p-2">MFA</th>
-                <th className="p-2">Created</th>
-                <th className="p-2 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id} className="border-t border-brown/10">
-                  <td className="p-2 font-medium">{r.username}</td>
-                  <td className="p-2 text-mid">{r.role}</td>
-                  <td className="p-2">{r.mfa_enrolled ? "✓" : "—"}</td>
-                  <td className="p-2 text-xs text-mid">{r.created_at}</td>
-                  <td className="space-x-1 p-2 text-right">
-                    <button onClick={() => reset(r)} className="rounded-button bg-peach px-2 py-1 text-xs">Reset pw</button>
+      </header>
+
+      {error && <p className="mb-6 text-sm text-danger">{t(error)}</p>}
+
+      {loading ? (
+        <p className="text-mid">{t("loading")}</p>
+      ) : (
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-hair-strong text-left text-xs uppercase tracking-[0.14em] text-muted">
+              <th className="py-3 pr-3 font-normal">{t("username")}</th>
+              <th className="py-3 pr-3 font-normal">Role</th>
+              <th className="py-3 pr-3 font-normal">MFA</th>
+              <th className="py-3 pr-3 font-normal">Created</th>
+              <th className="py-3 text-right font-normal">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id} className="border-b border-hair transition-colors hover:bg-ivory/40">
+                <td className="py-3 pr-3 text-ink">{r.username}</td>
+                <td className="py-3 pr-3">
+                  <span className="text-xs uppercase tracking-[0.14em] text-mid">{r.role}</span>
+                </td>
+                <td className="py-3 pr-3">
+                  {r.mfa_enrolled
+                    ? <IconCheck size={14} className="text-ok-fg" />
+                    : <span className="text-hair-strong">—</span>}
+                </td>
+                <td className="py-3 pr-3 font-mono text-xs text-muted">{r.created_at.slice(0, 10)}</td>
+                <td className="py-3">
+                  <div className="flex justify-end gap-1">
+                    <button onClick={() => reset(r)} className="btn-quiet">Reset pw</button>
                     {r.id !== user?.id && (
-                      <button onClick={() => del(r)} className="rounded-button bg-danger/10 px-2 py-1 text-xs text-danger">
+                      <button onClick={() => del(r)} className="btn-quiet hover:!text-danger">
                         {t("delete")}
                       </button>
                     )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
       {adding && (
@@ -103,19 +119,20 @@ export function UsersPage() {
 
       {tempPw && (
         <Modal open onClose={() => setTempPw(null)} title="Temporary password">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
             <p className="text-sm text-mid">
-              Hand this to <strong>{tempPw.username}</strong>. It only shows once.
+              Hand this to <span className="text-ink">{tempPw.username}</span>. It only shows once.
             </p>
-            <div className="rounded-card bg-peach p-4 text-center">
-              <code className="text-xl">{tempPw.password}</code>
-              <button
-                onClick={() => navigator.clipboard.writeText(tempPw.password)}
-                className="mt-2 block w-full rounded-button bg-brown py-2 text-sm font-semibold text-white"
-              >
-                Copy
-              </button>
+            <div className="border border-hair bg-ivory px-6 py-8 text-center">
+              <code className="font-mono text-2xl tracking-[0.1em] text-brown-deep">{tempPw.password}</code>
             </div>
+            <button
+              onClick={() => navigator.clipboard.writeText(tempPw.password)}
+              className="btn-primary self-end"
+            >
+              <IconCopy size={14} />
+              Copy password
+            </button>
           </div>
         </Modal>
       )}
@@ -154,38 +171,36 @@ function AddUserForm({
 
   return (
     <Modal open onClose={onClose} title="Add user">
-      <form onSubmit={submit} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm">
-          <span>{t("username")}</span>
-          <input required value={username} onChange={(e) => setUsername(e.target.value)}
-            className="rounded-button border border-brown/30 px-3 py-2" />
+      <form onSubmit={submit} className="flex flex-col gap-6">
+        <label className="flex flex-col gap-2">
+          <span className="text-xs uppercase tracking-[0.14em] text-muted">{t("username")}</span>
+          <input required value={username} onChange={(e) => setUsername(e.target.value)} className="field" />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span>Role</span>
-          <select value={role} onChange={(e) => setRole(e.target.value as Role)}
-            className="rounded-button border border-brown/30 px-3 py-2">
+        <label className="flex flex-col gap-2">
+          <span className="text-xs uppercase tracking-[0.14em] text-muted">Role</span>
+          <select value={role} onChange={(e) => setRole(e.target.value as Role)} className="field">
             {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
           </select>
         </label>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={autoGen} onChange={(e) => setAutoGen(e.target.checked)} />
-          <span>Auto-generate password (recommended)</span>
+        <label className="flex items-center gap-3 text-sm text-ink">
+          <input
+            type="checkbox" checked={autoGen}
+            onChange={(e) => setAutoGen(e.target.checked)}
+            className="h-4 w-4 accent-brown-deep"
+          />
+          <span>Auto-generate password <span className="text-muted">(recommended)</span></span>
         </label>
         {!autoGen && (
-          <label className="flex flex-col gap-1 text-sm">
-            <span>{t("password")}</span>
+          <label className="flex flex-col gap-2">
+            <span className="text-xs uppercase tracking-[0.14em] text-muted">{t("password")}</span>
             <input type="password" required minLength={8} value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="rounded-button border border-brown/30 px-3 py-2" />
+              onChange={(e) => setPassword(e.target.value)} className="field" />
           </label>
         )}
         {error && <p className="text-sm text-danger">{t(error)}</p>}
-        <div className="mt-2 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="rounded-button border border-brown/30 px-4 py-2 text-sm">
-            {t("cancel")}
-          </button>
-          <button type="submit" disabled={busy}
-            className="rounded-button bg-brown px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">
+        <div className="mt-2 flex justify-end gap-3">
+          <button type="button" onClick={onClose} className="btn-ghost">{t("cancel")}</button>
+          <button type="submit" disabled={busy} className="btn-primary">
             {busy ? t("loading") : t("save")}
           </button>
         </div>

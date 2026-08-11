@@ -43,14 +43,14 @@ export function MenuPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-6 pb-32 pt-16">
-      <header className="rise mb-16 max-w-3xl">
+      {/* <header className="rise mb-16 max-w-3xl">
         <h1 className="font-heading text-5xl leading-[1.05] text-brown-deep sm:text-6xl">
           {t("nav_menu")}
         </h1>
         <p className="mt-6 max-w-xl text-base text-mid">
           Everything the kitchen can send out right now. Prices in pesos, cash or card at the register.
         </p>
-      </header>
+      </header> */}
 
       <div className="mb-12 flex items-center gap-3 border-b border-hair pb-2">
         <IconSearch size={16} className="text-muted" />

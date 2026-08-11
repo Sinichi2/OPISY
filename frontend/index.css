@@ -69,20 +69,12 @@
   --color-danger:    #8a2b26;
 
   --font-body:    "ElliotSans", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Newsreader", "Arbutus Slab", ui-serif, Georgia, serif;
+  --font-heading: "Newsreader", ui-serif, Georgia, serif;
   --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --radius-badge:  2px;
   --radius-button: 4px;
   --radius-card:   4px;
-
-  --spacing-xs:  4px;
-  --spacing-sm:  8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 40px;
-  --spacing-2xl: 64px;
-  --spacing-3xl: 96px;
 }
 
 * { -webkit-font-smoothing: antialiased; }

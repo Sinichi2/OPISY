@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api, apiJson, ApiError } from "../api";
 import { hasRole, useAuth } from "../auth";
 import { useLang } from "../lang";
+import { IconArrow, IconCheck, IconClose, IconUp } from "../components/Icon";
 
 interface OrderLine { menu_item_id: number; quantity: number; unit_price: number; name: string }
 interface Order {
@@ -19,6 +20,14 @@ interface Order {
   queue_position: number;
   lines: OrderLine[];
 }
+
+type Tone = "pending" | "preparing" | "ready";
+
+const TONE_CHIP: Record<Tone, string> = {
+  pending:   "bg-warn-bg text-warn-fg",
+  preparing: "bg-info-bg text-info-fg",
+  ready:     "bg-ok-bg text-ok-fg",
+};
 
 export function OrdersQueuePage() {
   const { t } = useLang();
@@ -49,15 +58,13 @@ export function OrdersQueuePage() {
     try { await apiJson("/api/orders/claim-next", {}); await load(); }
     finally { setBusy(false); }
   }
-  async function claim(o: Order) { await apiJson(`/api/orders/${o.id}/claim`, {}); load(); }
+  async function claim(o: Order)   { await apiJson(`/api/orders/${o.id}/claim`, {}); load(); }
   async function release(o: Order) { await apiJson(`/api/orders/${o.id}/release`, {}); load(); }
   async function status(o: Order, next: string) {
-    await apiJson(`/api/orders/${o.id}/status`, { status: next }, "PATCH");
-    load();
+    await apiJson(`/api/orders/${o.id}/status`, { status: next }, "PATCH"); load();
   }
   async function bump(o: Order) {
-    await apiJson(`/api/orders/${o.id}/priority`, { priority: o.priority + 1 });
-    load();
+    await apiJson(`/api/orders/${o.id}/priority`, { priority: o.priority + 1 }); load();
   }
 
   const pending    = orders.filter((o) => o.status === "pending");
@@ -65,87 +72,155 @@ export function OrdersQueuePage() {
   const ready      = orders.filter((o) => o.status === "ready");
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-heading text-3xl text-brown">{t("nav_orders")}</h1>
-        <button onClick={claimNext} disabled={busy || pending.length === 0}
-          className="rounded-button bg-brown px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-90 disabled:opacity-50">
-          Claim next ({pending.length})
+    <main className="mx-auto max-w-7xl px-6 py-12">
+      <header className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-hair pb-6">
+        <div>
+          <h1 className="font-heading text-4xl text-brown-deep">{t("nav_orders")}</h1>
+          <p className="mt-3 flex gap-x-8 gap-y-1 text-sm text-mid">
+            <span><span className="font-mono text-ink">{pending.length}</span> waiting</span>
+            <span><span className="font-mono text-ink">{preparing.length}</span> in progress</span>
+            <span><span className="font-mono text-ink">{ready.length}</span> ready</span>
+          </p>
+        </div>
+        <button onClick={claimNext} disabled={busy || pending.length === 0} className="btn-primary">
+          Claim next
+          <span className="font-mono text-xs opacity-80">({pending.length})</span>
+          <IconArrow size={14} />
         </button>
-      </div>
-      {error && <p className="mb-4 text-danger">{t(error)}</p>}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Column title={`Queue · ${pending.length}`} tone="pending">
+      </header>
+
+      {error && <p className="mb-6 text-sm text-danger">{t(error)}</p>}
+
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <Column title={t("nav_orders")} label="Queue" count={pending.length} tone="pending">
           {pending.map((o) => (
-            <Card key={o.id} order={o}>
-              <button onClick={() => claim(o)} className="rounded-button bg-brown px-3 py-1 text-xs font-semibold text-white">Claim</button>
+            <Card key={o.id} order={o} tone="pending">
+              <button onClick={() => claim(o)} className="btn-ghost">
+                <IconCheck size={12} /> Claim
+              </button>
               {canBump && (
-                <button onClick={() => bump(o)} className="rounded-button bg-peach px-3 py-1 text-xs">Bump ↑</button>
+                <button onClick={() => bump(o)} className="btn-quiet">
+                  <IconUp size={12} /> Bump
+                </button>
               )}
             </Card>
           ))}
-          {pending.length === 0 && <Empty />}
+          {pending.length === 0 && <Empty label="Queue clear." />}
         </Column>
 
-        <Column title={`In progress · ${preparing.length}`} tone="preparing">
+        <Column title="Preparing" label="In progress" count={preparing.length} tone="preparing">
           {preparing.map((o) => (
-            <Card key={o.id} order={o} highlight={o.assigned_to === user?.id}>
-              <button onClick={() => status(o, "ready")} className="rounded-button bg-green-700 px-3 py-1 text-xs font-semibold text-white">Ready</button>
-              <button onClick={() => release(o)} className="rounded-button bg-peach px-3 py-1 text-xs">Release</button>
-              <button onClick={() => status(o, "cancelled")} className="rounded-button bg-danger/10 px-3 py-1 text-xs text-danger">Cancel</button>
+            <Card key={o.id} order={o} tone="preparing" highlight={o.assigned_to === user?.id}>
+              <button onClick={() => status(o, "ready")} className="btn-primary !px-3 !py-1.5 !text-xs">
+                <IconCheck size={12} /> Ready
+              </button>
+              <button onClick={() => release(o)} className="btn-quiet">Release</button>
+              <button onClick={() => status(o, "cancelled")} className="btn-quiet hover:!text-danger">
+                <IconClose size={12} /> Cancel
+              </button>
             </Card>
           ))}
-          {preparing.length === 0 && <Empty />}
+          {preparing.length === 0 && <Empty label="Nothing in progress." />}
         </Column>
 
-        <Column title={`Ready · ${ready.length}`} tone="ready">
+        <Column title="Ready" label="For pickup" count={ready.length} tone="ready">
           {ready.map((o) => (
-            <Card key={o.id} order={o}>
-              <button onClick={() => status(o, "served")} className="rounded-button bg-brown px-3 py-1 text-xs font-semibold text-white">Served</button>
+            <Card key={o.id} order={o} tone="ready">
+              <button onClick={() => status(o, "served")} className="btn-ghost">
+                <IconCheck size={12} /> Served
+              </button>
             </Card>
           ))}
-          {ready.length === 0 && <Empty />}
+          {ready.length === 0 && <Empty label="Nothing waiting." />}
         </Column>
       </div>
     </main>
   );
 }
 
-function Column({ title, tone, children }: { title: string; tone: string; children: React.ReactNode }) {
-  const bg = tone === "pending" ? "bg-yellow-50" : tone === "preparing" ? "bg-blue-50" : "bg-green-50";
+function Column({
+  title, label, count, tone, children,
+}: {
+  title: string; label: string; count: number; tone: Tone; children: React.ReactNode;
+}) {
   return (
-    <section className={`flex flex-col gap-3 rounded-card p-3 ${bg}`}>
-      <h2 className="font-heading text-lg text-brown">{title}</h2>
-      {children}
+    <section className="flex flex-col gap-4">
+      <div className="flex items-baseline justify-between border-b border-hair-strong pb-3">
+        <h2 className="font-heading text-xl text-brown-deep">{title}</h2>
+        <div className="flex items-baseline gap-3 text-xs uppercase tracking-[0.14em]">
+          <span className={`chip ${TONE_CHIP[tone]}`}>{label}</span>
+          <span className="font-mono text-mid">{count}</span>
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">{children}</div>
     </section>
   );
 }
 
-function Empty() { return <p className="text-center text-sm text-mid">—</p>; }
+function Empty({ label }: { label: string }) {
+  return <p className="border border-dashed border-hair-strong px-3 py-6 text-center text-sm text-muted">{label}</p>;
+}
 
-function Card({ order, highlight, children }: { order: Order; highlight?: boolean; children: React.ReactNode }) {
+function Card({
+  order, tone, highlight, children,
+}: {
+  order: Order; tone: Tone; highlight?: boolean; children: React.ReactNode;
+}) {
   const total = order.lines.reduce((s, l) => s + l.quantity * l.unit_price, 0);
   return (
-    <div className={`rounded-card bg-white p-3 shadow ${highlight ? "ring-2 ring-brown" : ""}`}>
-      <div className="mb-2 flex items-baseline justify-between">
-        {order.status === "pending"
-          ? <span className="rounded-badge bg-brown px-2 py-0.5 text-lg font-bold text-white">#{order.queue_position}</span>
-          : <span className="font-heading text-brown">Order #{order.id}</span>}
-        <span className="font-mono text-sm">₱{total.toFixed(2)}</span>
-      </div>
-      <p className="text-sm">
-        <strong>{order.customer_name}</strong>
-        {order.table_number ? ` · Table ${order.table_number}` : ""}
+    <article
+      className={`border bg-paper p-4 transition-shadow ${
+        highlight ? "border-brown-deep shadow-[0_0_0_1px_var(--color-brown-deep)]" : "border-hair"
+      }`}
+    >
+      <header className="mb-3 flex items-baseline justify-between gap-3">
+        {order.status === "pending" ? (
+          <span className="font-mono text-2xl leading-none text-brown-deep">
+            <span className="text-muted">#</span>{order.queue_position}
+          </span>
+        ) : (
+          <span className="font-heading text-lg text-brown-deep">Order #{order.id}</span>
+        )}
+        <span className="font-mono text-sm text-ink">₱{total.toFixed(2)}</span>
+      </header>
+
+      <p className="text-sm text-ink">
+        {order.customer_name}
+        {order.table_number && (
+          <>
+            <span className="mx-2 text-hair-strong">·</span>
+            <span className="text-mid">Table {order.table_number}</span>
+          </>
+        )}
       </p>
-      {order.priority > 0 && <p className="text-xs font-semibold text-danger">Priority {order.priority}</p>}
-      {order.assigned_to_name && <p className="text-xs text-mid">by {order.assigned_to_name}</p>}
-      <ul className="my-2 text-sm">
+
+      <div className="mt-1 flex flex-wrap gap-2 text-xs">
+        {order.priority > 0 && (
+          <span className={`chip ${TONE_CHIP[tone === "pending" ? "pending" : "preparing"]}`}>
+            Priority {order.priority}
+          </span>
+        )}
+        {order.assigned_to_name && (
+          <span className="text-muted">by {order.assigned_to_name}</span>
+        )}
+      </div>
+
+      <ul className="my-4 border-t border-hair pt-3 text-sm text-ink">
         {order.lines.map((l, i) => (
-          <li key={i}>{l.quantity}× {l.name}</li>
+          <li key={i} className="flex justify-between py-0.5">
+            <span>{l.name}</span>
+            <span className="font-mono text-muted">×{l.quantity}</span>
+          </li>
         ))}
       </ul>
-      {order.notes && <p className="mb-2 text-xs italic text-mid">{order.notes}</p>}
-      <div className="flex flex-wrap gap-1">{children}</div>
-    </div>
+
+      {order.notes && (
+        <p className="mb-3 text-xs italic text-mid">
+          <span className="mr-2 text-muted">Note ·</span>{order.notes}
+        </p>
+      )}
+
+      <div className="flex flex-wrap items-center gap-2 pt-1">{children}</div>
+    </article>
   );
 }
