@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Self-hosted so the app renders correctly with no internet on the LAN
+   (see @font-face block below for the body font, same reasoning) --
+   was a Google Fonts CDN <link> in index.html, which silently fell back
+   to system serif/mono when offline. */
+@import "@fontsource-variable/newsreader";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
 @font-face {
   font-family: "ElliotSans";
   src: url("./assets/fonts/elliot-sans/ElliotSans-Light.ttf") format("truetype");
@@ -69,7 +77,7 @@
   --color-danger:    #8a2b26;
 
   --font-body:    "ElliotSans", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Newsreader", ui-serif, Georgia, serif;
+  --font-heading: "Newsreader Variable", ui-serif, Georgia, serif;
   --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --radius-badge:  2px;
